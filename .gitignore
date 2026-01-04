@@ -1,0 +1,52 @@
+# --- Terraform / OpenTofu ---
+**/.terraform/*
+**/.tofu/*
+#.terraform.lock.hcl
+
+# Local state
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# CLI override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Var files (do not commit secrets)
+*.tfvars
+*.tfvars.json
+
+# Plan output files
+*.tfplan
+
+# Kubernetes / Helm local artifacts
+kubeconfig
+*kubeconfig*
+*.kubeconfig
+
+# General build/cache dirs
+.cache/
+dist/
+build/
+out/
+tmp/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
