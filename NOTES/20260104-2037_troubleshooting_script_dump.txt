@@ -1,0 +1,272 @@
+┌─[drew@jac494-primary] - [~/Projects/otel-multicloud-playground/scripts] - [1825]
+└─[$] ./troubleshooting-doks.sh                                                                                                                                                                                                    [20:36:00]
+#### get kubectl context
+do-nyc3-otel-do-dev
+
+#### get nodes
+NAME            STATUS   ROLES    AGE   VERSION   INTERNAL-IP   EXTERNAL-IP      OS-IMAGE                       KERNEL-VERSION        CONTAINER-RUNTIME
+default-5vvb3   Ready    <none>   40m   v1.34.1   10.132.0.2    143.198.6.80     Debian GNU/Linux 13 (trixie)   6.12.48+deb13-amd64   containerd://1.7.28
+default-5vvb8   Ready    <none>   40m   v1.34.1   10.132.0.3    167.71.243.237   Debian GNU/Linux 13 (trixie)   6.12.48+deb13-amd64   containerd://1.7.28
+
+#### quick helm status
+NAME	NAMESPACE	REVISION	UPDATED	STATUS	CHART	APP VERSION
+NAME: my-otel-demo
+LAST DEPLOYED: Sun Jan  4 20:32:56 2026
+NAMESPACE: otel-demo
+STATUS: pending-upgrade
+REVISION: 2
+TEST SUITE: None
+NOTES:
+=======================================================================================
+
+
+ ██████╗ ████████╗███████╗██╗         ██████╗ ███████╗███╗   ███╗ ██████╗
+██╔═══██╗╚══██╔══╝██╔════╝██║         ██╔══██╗██╔════╝████╗ ████║██╔═══██╗
+██║   ██║   ██║   █████╗  ██║         ██║  ██║█████╗  ██╔████╔██║██║   ██║
+██║   ██║   ██║   ██╔══╝  ██║         ██║  ██║██╔══╝  ██║╚██╔╝██║██║   ██║
+╚██████╔╝   ██║   ███████╗███████╗    ██████╔╝███████╗██║ ╚═╝ ██║╚██████╔╝
+ ╚═════╝    ╚═╝   ╚══════╝╚══════╝    ╚═════╝ ╚══════╝╚═╝     ╚═╝ ╚═════╝
+
+
+- All services are available via the Frontend proxy: http://localhost:8080
+  by running these commands:
+     kubectl --namespace otel-demo port-forward svc/frontend-proxy 8080:8080
+
+  The following services are available at these paths after the frontend-proxy service is exposed with port forwarding:
+  Webstore             http://localhost:8080/
+  Jaeger UI            http://localhost:8080/jaeger/ui/
+  Grafana              http://localhost:8080/grafana/
+  Load Generator UI    http://localhost:8080/loadgen/
+  Feature Flags UI     http://localhost:8080/feature/
+---
+# Source: opentelemetry-demo/charts/opensearch/templates/poddisruptionbudget.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: "opensearch-pdb"
+  labels:
+    helm.sh/chart: opensearch-3.2.1
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: my-otel-demo
+    app.kubernetes.io/version: "3.2.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: opensearch
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opensearch
+      app.kubernetes.io/instance: my-otel-demo
+---
+# Source: opentelemetry-demo/charts/grafana/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: false
+metadata:
+  labels:
+    helm.sh/chart: grafana-10.1.2
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: my-otel-demo
+    app.kubernetes.io/version: "12.2.0"
+  name: grafana
+  namespace: otel-demo
+---
+# Source: opentelemetry-demo/charts/jaeger/templates/allinone-sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jaeger
+  labels:
+    helm.sh/chart: jaeger-3.4.1
+
+#### what exists
+NAME                                   READY   STATUS             RESTARTS       AGE
+pod/accounting-6c8fcd898c-q79fh        1/1     Running            0              38m
+pod/ad-6b4c9b6549-79zjs                1/1     Running            0              38m
+pod/cart-5b85789df-gf5ld               1/1     Running            0              38m
+pod/checkout-75ff8fc86f-h6ldz          1/1     Running            0              38m
+pod/currency-79dd4d94fd-48vxb          1/1     Running            0              38m
+pod/email-979476c59-9hg6q              0/1     Pending            0              38m
+pod/flagd-6788d758ff-c7c7v             1/2     CrashLoopBackOff   12 (77s ago)   38m
+pod/fraud-detection-74c7757879-xdrgm   1/1     Running            0              38m
+pod/frontend-5c4cfb58d7-qzwhs          0/1     Pending            0              38m
+pod/frontend-proxy-5cd88cd48f-kkqc5    1/1     Running            0              38m
+pod/grafana-75d59cdff4-rfw4h           0/4     Pending            0              38m
+pod/image-provider-687cd466bf-kgjb5    1/1     Running            0              38m
+pod/jaeger-8556cdf449-8n8kr            0/1     Pending            0              38m
+pod/kafka-6f596699d7-d6z9b             1/1     Running            0              38m
+pod/load-generator-7d75dd5fb4-5xwvd    1/1     Running            0              38m
+pod/opensearch-0                       1/1     Running            0              38m
+pod/otel-collector-6c4cc76465-l5l26    1/1     Running            0              38m
+pod/payment-8c978d6f8-lsgbx            1/1     Running            0              38m
+pod/postgresql-9f8cff57f-6m4zd         1/1     Running            0              38m
+pod/product-catalog-589bcf4889-prwjb   1/1     Running            0              38m
+pod/prometheus-7d7bc46676-nddrw        0/1     Pending            0              38m
+pod/quote-779695685f-96857             1/1     Running            0              38m
+pod/recommendation-6888db4747-4mb26    1/1     Running            0              38m
+pod/shipping-58b5b767cd-wh878          1/1     Running            0              38m
+pod/valkey-cart-7845fbb7d6-wfldv       1/1     Running            0              38m
+
+NAME                          TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)                                                            AGE
+service/ad                    ClusterIP      10.109.26.80    <none>          8080/TCP                                                           38m
+service/cart                  ClusterIP      10.109.7.165    <none>          8080/TCP                                                           38m
+service/checkout              ClusterIP      10.109.16.152   <none>          8080/TCP                                                           38m
+service/currency              ClusterIP      10.109.14.91    <none>          8080/TCP                                                           38m
+service/email                 ClusterIP      10.109.28.188   <none>          8080/TCP                                                           38m
+service/flagd                 ClusterIP      10.109.1.140    <none>          8013/TCP,8016/TCP,4000/TCP                                         38m
+service/frontend              ClusterIP      10.109.29.97    <none>          8080/TCP                                                           38m
+service/frontend-proxy        LoadBalancer   10.109.6.170    138.197.55.55   8080:30460/TCP                                                     38m
+service/grafana               ClusterIP      10.109.12.14    <none>          80/TCP                                                             38m
+service/image-provider        ClusterIP      10.109.19.110   <none>          8081/TCP                                                           38m
+service/jaeger-agent          ClusterIP      None            <none>          5775/UDP,5778/TCP,6831/UDP,6832/UDP                                38m
+service/jaeger-collector      ClusterIP      None            <none>          9411/TCP,14250/TCP,14267/TCP,14268/TCP,4317/TCP,4318/TCP           38m
+service/jaeger-query          ClusterIP      None            <none>          16686/TCP,16685/TCP                                                38m
+service/kafka                 ClusterIP      10.109.5.206    <none>          9092/TCP,9093/TCP                                                  38m
+service/load-generator        ClusterIP      10.109.21.26    <none>          8089/TCP                                                           38m
+service/opensearch            ClusterIP      10.109.7.158    <none>          9200/TCP,9300/TCP,9600/TCP                                         38m
+service/opensearch-headless   ClusterIP      None            <none>          9200/TCP,9300/TCP,9600/TCP                                         38m
+service/otel-collector        ClusterIP      10.109.27.95    <none>          6831/UDP,14250/TCP,14268/TCP,8888/TCP,4317/TCP,4318/TCP,9411/TCP   38m
+service/payment               ClusterIP      10.109.26.214   <none>          8080/TCP                                                           38m
+service/postgresql            ClusterIP      10.109.12.37    <none>          5432/TCP                                                           38m
+service/product-catalog       ClusterIP      10.109.31.36    <none>          8080/TCP                                                           38m
+service/prometheus            ClusterIP      10.109.29.126   <none>          9090/TCP                                                           38m
+service/quote                 ClusterIP      10.109.23.197   <none>          8080/TCP                                                           38m
+service/recommendation        ClusterIP      10.109.21.184   <none>          8080/TCP                                                           38m
+service/shipping              ClusterIP      10.109.13.211   <none>          8080/TCP                                                           38m
+service/valkey-cart           ClusterIP      10.109.14.82    <none>          6379/TCP                                                           38m
+
+NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/accounting        1/1     1            1           38m
+deployment.apps/ad                1/1     1            1           38m
+deployment.apps/cart              1/1     1            1           38m
+deployment.apps/checkout          1/1     1            1           38m
+deployment.apps/currency          1/1     1            1           38m
+deployment.apps/email             0/1     1            0           38m
+deployment.apps/flagd             0/1     1            0           38m
+deployment.apps/fraud-detection   1/1     1            1           38m
+deployment.apps/frontend          0/1     1            0           38m
+deployment.apps/frontend-proxy    1/1     1            1           38m
+deployment.apps/grafana           0/1     1            0           38m
+deployment.apps/image-provider    1/1     1            1           38m
+deployment.apps/jaeger            0/1     1            0           38m
+deployment.apps/kafka             1/1     1            1           38m
+deployment.apps/load-generator    1/1     1            1           38m
+deployment.apps/otel-collector    1/1     1            1           38m
+deployment.apps/payment           1/1     1            1           38m
+deployment.apps/postgresql        1/1     1            1           38m
+deployment.apps/product-catalog   1/1     1            1           38m
+deployment.apps/prometheus        0/1     1            0           38m
+deployment.apps/quote             1/1     1            1           38m
+deployment.apps/recommendation    1/1     1            1           38m
+deployment.apps/shipping          1/1     1            1           38m
+deployment.apps/valkey-cart       1/1     1            1           38m
+
+NAME                                         DESIRED   CURRENT   READY   AGE
+replicaset.apps/accounting-6c8fcd898c        1         1         1       38m
+replicaset.apps/ad-6b4c9b6549                1         1         1       38m
+replicaset.apps/cart-5b85789df               1         1         1       38m
+replicaset.apps/checkout-75ff8fc86f          1         1         1       38m
+replicaset.apps/currency-79dd4d94fd          1         1         1       38m
+replicaset.apps/email-979476c59              1         1         0       38m
+replicaset.apps/flagd-6788d758ff             1         1         0       38m
+replicaset.apps/fraud-detection-74c7757879   1         1         1       38m
+replicaset.apps/frontend-5c4cfb58d7          1         1         0       38m
+replicaset.apps/frontend-proxy-5cd88cd48f    1         1         1       38m
+replicaset.apps/grafana-75d59cdff4           1         1         0       38m
+replicaset.apps/image-provider-687cd466bf    1         1         1       38m
+replicaset.apps/jaeger-8556cdf449            1         1         0       38m
+replicaset.apps/kafka-6f596699d7             1         1         1       38m
+replicaset.apps/load-generator-7d75dd5fb4    1         1         1       38m
+replicaset.apps/otel-collector-6c4cc76465    1         1         1       38m
+replicaset.apps/payment-8c978d6f8            1         1         1       38m
+replicaset.apps/postgresql-9f8cff57f         1         1         1       38m
+replicaset.apps/product-catalog-589bcf4889   1         1         1       38m
+replicaset.apps/prometheus-7d7bc46676        1         1         0       38m
+replicaset.apps/quote-779695685f             1         1         1       38m
+replicaset.apps/recommendation-6888db4747    1         1         1       38m
+replicaset.apps/shipping-58b5b767cd          1         1         1       38m
+replicaset.apps/valkey-cart-7845fbb7d6       1         1         1       38m
+
+NAME                          READY   AGE
+statefulset.apps/opensearch   1/1     38m
+NAME                               READY   STATUS             RESTARTS       AGE   IP             NODE            NOMINATED NODE   READINESS GATES
+accounting-6c8fcd898c-q79fh        1/1     Running            0              38m   10.108.0.222   default-5vvb3   <none>           <none>
+ad-6b4c9b6549-79zjs                1/1     Running            0              38m   10.108.0.47    default-5vvb8   <none>           <none>
+cart-5b85789df-gf5ld               1/1     Running            0              38m   10.108.0.62    default-5vvb8   <none>           <none>
+checkout-75ff8fc86f-h6ldz          1/1     Running            0              38m   10.108.0.113   default-5vvb8   <none>           <none>
+currency-79dd4d94fd-48vxb          1/1     Running            0              38m   10.108.0.115   default-5vvb8   <none>           <none>
+email-979476c59-9hg6q              0/1     Pending            0              38m   <none>         <none>          <none>           <none>
+flagd-6788d758ff-c7c7v             1/2     CrashLoopBackOff   12 (79s ago)   38m   10.108.0.100   default-5vvb8   <none>           <none>
+fraud-detection-74c7757879-xdrgm   1/1     Running            0              38m   10.108.0.107   default-5vvb8   <none>           <none>
+frontend-5c4cfb58d7-qzwhs          0/1     Pending            0              38m   <none>         <none>          <none>           <none>
+frontend-proxy-5cd88cd48f-kkqc5    1/1     Running            0              38m   10.108.0.20    default-5vvb8   <none>           <none>
+grafana-75d59cdff4-rfw4h           0/4     Pending            0              38m   <none>         <none>          <none>           <none>
+image-provider-687cd466bf-kgjb5    1/1     Running            0              38m   10.108.0.97    default-5vvb8   <none>           <none>
+jaeger-8556cdf449-8n8kr            0/1     Pending            0              38m   <none>         <none>          <none>           <none>
+kafka-6f596699d7-d6z9b             1/1     Running            0              38m   10.108.0.130   default-5vvb3   <none>           <none>
+load-generator-7d75dd5fb4-5xwvd    1/1     Running            0              38m   10.108.0.248   default-5vvb3   <none>           <none>
+opensearch-0                       1/1     Running            0              38m   10.108.0.21    default-5vvb8   <none>           <none>
+otel-collector-6c4cc76465-l5l26    1/1     Running            0              38m   10.108.0.73    default-5vvb8   <none>           <none>
+payment-8c978d6f8-lsgbx            1/1     Running            0              38m   10.108.0.69    default-5vvb8   <none>           <none>
+postgresql-9f8cff57f-6m4zd         1/1     Running            0              38m   10.108.0.151   default-5vvb3   <none>           <none>
+product-catalog-589bcf4889-prwjb   1/1     Running            0              38m   10.108.0.15    default-5vvb8   <none>           <none>
+prometheus-7d7bc46676-nddrw        0/1     Pending            0              38m   <none>         <none>          <none>           <none>
+quote-779695685f-96857             1/1     Running            0              38m   10.108.0.30    default-5vvb8   <none>           <none>
+recommendation-6888db4747-4mb26    1/1     Running            0              38m   10.108.0.3     default-5vvb8   <none>           <none>
+shipping-58b5b767cd-wh878          1/1     Running            0              38m   10.108.0.31    default-5vvb8   <none>           <none>
+valkey-cart-7845fbb7d6-wfldv       1/1     Running            0              38m   10.108.0.50    default-5vvb8   <none>           <none>
+
+#### recent events
+38m         Normal    Started                  pod/frontend-proxy-5cd88cd48f-kkqc5     Started container frontend-proxy
+38m         Normal    Created                  pod/flagd-6788d758ff-c7c7v              Created container: flagd
+38m         Normal    Pulled                   pod/flagd-6788d758ff-c7c7v              Successfully pulled image "ghcr.io/open-feature/flagd:v0.12.8" in 17.599s (17.599s including waiting). Image size: 47451923 bytes.
+38m         Normal    Started                  pod/flagd-6788d758ff-c7c7v              Started container flagd
+38m         Normal    Pulling                  pod/flagd-6788d758ff-c7c7v              Pulling image "ghcr.io/open-telemetry/demo:2.1.3-flagd-ui"
+38m         Normal    Pulled                   pod/load-generator-7d75dd5fb4-5xwvd     Successfully pulled image "ghcr.io/open-telemetry/demo:2.1.3-load-generator" in 39.318s (39.318s including waiting). Image size: 564211217 bytes.
+38m         Normal    Created                  pod/cart-5b85789df-gf5ld                Created container: cart
+38m         Normal    Pulled                   pod/cart-5b85789df-gf5ld                Successfully pulled image "ghcr.io/open-telemetry/demo:2.1.3-cart" in 13.556s (13.556s including waiting). Image size: 48351300 bytes.
+38m         Normal    Started                  pod/load-generator-7d75dd5fb4-5xwvd     Started container load-generator
+38m         Normal    Created                  pod/load-generator-7d75dd5fb4-5xwvd     Created container: load-generator
+38m         Normal    Started                  pod/cart-5b85789df-gf5ld                Started container cart
+38m         Normal    Created                  pod/payment-8c978d6f8-lsgbx             Created container: payment
+38m         Normal    Pulled                   pod/ad-6b4c9b6549-79zjs                 Successfully pulled image "ghcr.io/open-telemetry/demo:2.1.3-ad" in 42.688s (42.688s including waiting). Image size: 166438320 bytes.
+38m         Normal    Started                  pod/ad-6b4c9b6549-79zjs                 Started container ad
+38m         Normal    Created                  pod/ad-6b4c9b6549-79zjs                 Created container: ad
+38m         Normal    Pulled                   pod/payment-8c978d6f8-lsgbx             Successfully pulled image "ghcr.io/open-telemetry/demo:2.1.3-payment" in 41.785s (41.785s including waiting). Image size: 72517834 bytes.
+38m         Normal    Started                  pod/payment-8c978d6f8-lsgbx             Started container payment
+38m         Normal    Created                  pod/otel-collector-6c4cc76465-l5l26     Created container: opentelemetry-collector
+38m         Normal    Started                  pod/otel-collector-6c4cc76465-l5l26     Started container opentelemetry-collector
+38m         Normal    Pulled                   pod/otel-collector-6c4cc76465-l5l26     Successfully pulled image "otel/opentelemetry-collector-contrib:0.135.0" in 29.469s (29.469s including waiting). Image size: 91128373 bytes.
+38m         Warning   Unhealthy                pod/otel-collector-6c4cc76465-l5l26     Readiness probe failed: Get "http://10.108.0.73:13133/": dial tcp 10.108.0.73:13133: connect: connection refused
+38m         Normal    Pulled                   pod/flagd-6788d758ff-c7c7v              Successfully pulled image "ghcr.io/open-telemetry/demo:2.1.3-flagd-ui" in 14.77s (14.77s including waiting). Image size: 49737147 bytes.
+37m         Normal    Pulling                  pod/accounting-6c8fcd898c-q79fh         Pulling image "ghcr.io/open-telemetry/demo:2.1.3-accounting"
+37m         Normal    Pulling                  pod/fraud-detection-74c7757879-xdrgm    Pulling image "ghcr.io/open-telemetry/demo:2.1.3-fraud-detection"
+37m         Normal    Pulling                  pod/checkout-75ff8fc86f-h6ldz           Pulling image "ghcr.io/open-telemetry/demo:2.1.3-checkout"
+37m         Normal    Pulled                   pod/checkout-75ff8fc86f-h6ldz           Successfully pulled image "ghcr.io/open-telemetry/demo:2.1.3-checkout" in 2.372s (2.372s including waiting). Image size: 8644876 bytes.
+37m         Normal    Started                  pod/checkout-75ff8fc86f-h6ldz           Started container checkout
+37m         Normal    Created                  pod/checkout-75ff8fc86f-h6ldz           Created container: checkout
+37m         Normal    Pulled                   pod/accounting-6c8fcd898c-q79fh         Successfully pulled image "ghcr.io/open-telemetry/demo:2.1.3-accounting" in 5.394s (5.394s including waiting). Image size: 109145785 bytes.
+37m         Normal    Started                  pod/accounting-6c8fcd898c-q79fh         Started container accounting
+37m         Normal    Created                  pod/accounting-6c8fcd898c-q79fh         Created container: accounting
+37m         Normal    Created                  pod/fraud-detection-74c7757879-xdrgm    Created container: fraud-detection
+37m         Normal    Started                  pod/fraud-detection-74c7757879-xdrgm    Started container fraud-detection
+37m         Normal    Pulled                   pod/fraud-detection-74c7757879-xdrgm    Successfully pulled image "ghcr.io/open-telemetry/demo:2.1.3-fraud-detection" in 14.031s (14.031s including waiting). Image size: 157760878 bytes.
+37m         Normal    Pulled                   pod/opensearch-0                        Successfully pulled image "opensearchproject/opensearch:3.2.0" in 1m21.425s (1m21.425s including waiting). Image size: 1005314273 bytes.
+37m         Normal    Created                  pod/opensearch-0                        Created container: configfile
+37m         Normal    Started                  pod/opensearch-0                        Started container configfile
+37m         Normal    Pulled                   pod/opensearch-0                        Container image "opensearchproject/opensearch:3.2.0" already present on machine
+37m         Normal    Created                  pod/opensearch-0                        Created container: opensearch
+37m         Normal    Started                  pod/opensearch-0                        Started container opensearch
+36m         Warning   Unhealthy                pod/opensearch-0                        Startup probe failed: dial tcp 10.108.0.21:9200: connect: connection refused
+36m         Normal    Created                  pod/flagd-6788d758ff-c7c7v              Created container: flagd-ui
+36m         Normal    Started                  pod/flagd-6788d758ff-c7c7v              Started container flagd-ui
+3m38s       Normal    NotTriggerScaleUp        pod/jaeger-8556cdf449-8n8kr             pod didn't trigger scale-up:
+3m38s       Normal    NotTriggerScaleUp        pod/prometheus-7d7bc46676-nddrw         pod didn't trigger scale-up:
+3m38s       Normal    NotTriggerScaleUp        pod/grafana-75d59cdff4-rfw4h            pod didn't trigger scale-up:
+3m38s       Normal    NotTriggerScaleUp        pod/email-979476c59-9hg6q               pod didn't trigger scale-up:
+3m38s       Normal    NotTriggerScaleUp        pod/frontend-5c4cfb58d7-qzwhs           pod didn't trigger scale-up:
+2m49s       Warning   BackOff                  pod/flagd-6788d758ff-c7c7v              Back-off restarting failed container flagd-ui in pod flagd-6788d758ff-c7c7v_otel-demo(690b16d6-0801-41ca-a3e6-bd67b9059485)
+80s         Normal    Pulled                   pod/flagd-6788d758ff-c7c7v              Container image "ghcr.io/open-telemetry/demo:2.1.3-flagd-ui" already present on machine
+
+┌─[drew@jac494-primary] - [~/Projects/otel-multicloud-playground/scripts] - [1826]
+└─[$]

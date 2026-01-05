@@ -104,6 +104,22 @@ components:
   frontend-proxy:
     service:
       type: LoadBalancer
+  flagd:
+    env:
+      - name: GOMEMLIMIT
+        value: 400Mi
+    useDefault:
+      env: true
+    resources:
+      limits:
+        memory: 512Mi
+    sidecarContainers:
+      - name: flagd-ui
+        useDefault:
+          env: true
+        resources:
+          limits:
+            memory: 512Mi
 EOF
 
 echo "==> Adding/updating Helm repo"

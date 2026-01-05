@@ -18,7 +18,7 @@ variable "k8s_version" {
 # The demo wants ~6GB free RAM per docs; 2 nodes of 4GB is a safe starting point. :contentReference[oaicite:3]{index=3}
 variable "node_size" {
   type    = string
-  default = "s-2vcpu-4gb"
+  default = "s-4vcpu-8gb"
 }
 
 variable "node_count" {
