@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-NS="default"
+NS="otel-demo"
 SVC="my-otel-demo-frontendproxy"
 
 echo "[1/4] Waiting for LoadBalancer external IP/hostname..."

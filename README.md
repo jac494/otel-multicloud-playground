@@ -1,7 +1,13 @@
 # OpenTelemetry OpenTofu Multicloud Playground
 
-![DOKS Cluster Tofu Tests](https://img.shields.io/badge/DOKS_Cluster_Tofu_Tests-passing-green)
-![DOKS OTEL Services Smoke Tests](https://img.shields.io/badge/DOKS_OTEL_Services_Smoke_Tests-failing-red)
+- DigitalOcean
+  - ![DOKS Cluster Tofu Tests](https://img.shields.io/badge/DOKS_Cluster_Tofu_Tests-passing-green)
+  - ![DOKS OTEL Services Smoke Tests](https://img.shields.io/badge/DOKS_OTEL_Services_Smoke_Tests-passing-green)
+- AWS
+  - ![EKS Cluster Tofu Tests](https://img.shields.io/badge/DOKS_Cluster_Tofu_Tests-tbd-grey)
+  - ![EKS OTEL Services Smoke Tests](https://img.shields.io/badge/DOKS_OTEL_Services_Smoke_Tests-tbd-grey)
+
+[OpenTelemetry Demo Docs](https://opentelemetry.io/docs/platforms/kubernetes/helm/demo/)
 
 I wanted to have a place to check out both otel and different cloud providers' managed k8s. I also needed a project to chew on for a sec. Here we are!
 
@@ -9,13 +15,13 @@ First step is getting digitalocean hooked up for the initial proof of concept an
 
 Prereqs (I have [some personal Ansible roles](https://github.com/jac494/blinkingboxes_home_ansible/blob/main/roles/drew_user/defaults/main.yml#L8-L15) that loosely get some of this going. I might come back and improve this but for now I don't want to distract myself from the current goal):
 
-* `tofu`
-* `kubectl`
-* `doctl`
-* `jq`
-* `curl`
-* `pre-commit`
-* `tflint`
+- `tofu`
+- `kubectl`
+- `doctl`
+- `jq`
+- `curl`
+- `pre-commit`
+- `tflint`
 
 For Digital Ocean and local testing, [you'll need a personal access token](https://docs.digitalocean.com/reference/api/create-personal-access-token/) and then export it like so:
 
