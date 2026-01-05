@@ -2,7 +2,7 @@
 set -euo pipefail
 
 NS="otel-demo"
-SVC="my-otel-demo-frontendproxy"
+SVC="frontend-proxy"
 
 echo "[1/4] Waiting for LoadBalancer external IP/hostname..."
 for _ in {1..60}; do

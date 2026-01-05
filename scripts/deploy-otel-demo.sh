@@ -107,18 +107,22 @@ components:
   flagd:
     env:
       - name: GOMEMLIMIT
-        value: 400Mi
+        value: 512MiB
     useDefault:
       env: true
     resources:
       limits:
-        memory: 512Mi
+        memory: 768Mi
+      requests:
+        memory: 256Mi
     sidecarContainers:
       - name: flagd-ui
         useDefault:
           env: true
         resources:
           limits:
+            memory: 3Gi
+          requests:
             memory: 512Mi
 EOF
 

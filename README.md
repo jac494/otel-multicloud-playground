@@ -11,7 +11,7 @@
 
 I wanted to have a place to check out both otel and different cloud providers' managed k8s. I also needed a project to chew on for a sec. Here we are!
 
-Update! DOKS is able to come up, and make is also working to call get the chart for the otel-demo installed.
+Update! DOKS is able to come up, and make is also working to get the chart for the otel-demo installed.
 
 **[Set up the DigitalOcean pat token as instructed below](#digitalocean-pat-token)** and this `make` one-liner should get it all running and run smoke tests:
 
