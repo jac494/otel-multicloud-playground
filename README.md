@@ -4,8 +4,8 @@
   - ![DOKS Cluster Tofu Tests](https://img.shields.io/badge/DOKS_Cluster_Tofu_Tests-passing-green)
   - ![DOKS OTEL Services Smoke Tests](https://img.shields.io/badge/DOKS_OTEL_Services_Smoke_Tests-passing-green)
 - AWS
-  - ![EKS Cluster Tofu Tests](https://img.shields.io/badge/DOKS_Cluster_Tofu_Tests-tbd-grey)
-  - ![EKS OTEL Services Smoke Tests](https://img.shields.io/badge/DOKS_OTEL_Services_Smoke_Tests-tbd-grey)
+  - ![EKS Cluster Tofu Tests](https://img.shields.io/badge/EKS_Cluster_Tofu_Tests-tbd-grey)
+  - ![EKS OTEL Services Smoke Tests](https://img.shields.io/badge/EKS_OTEL_Services_Smoke_Tests-tbd-grey)
 
 [OpenTelemetry Demo Docs](https://opentelemetry.io/docs/platforms/kubernetes/helm/demo/)
 

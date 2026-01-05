@@ -1,6 +1,6 @@
 # Notes from 20260104
 
-Got a ton of errors at the end of the DOKS first run, saving this for later (next time I ought to capture stderr by default. got excited and didn't think about that):
+Got a ton of errors at the end of the DOKS run trying to bring in the opentofu helm chart, saving this for later (next time I ought to capture stderr by default. got excited and didn't think about that):
 
 ```txt
 ┌─[drew@jac494-primary] - [~/Projects/otel-multicloud-playground/environments/do/dev] - [1471]
