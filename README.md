@@ -1,4 +1,4 @@
-# OpenTelemetry OpenTofu Multicloud Playground
+# OpenTelemetry OpenTofu Playground
 
 - DigitalOcean
   - ![DOKS Cluster Tofu Tests](https://img.shields.io/badge/DOKS_Cluster_Tofu_Tests-passing-green)
